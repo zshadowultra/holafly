@@ -1,19 +1,21 @@
 # fly-master
 
-A fruit fly brain simulation in Python (only needs numpy). It takes the working ideas from seven open source fly projects and puts them in one place: senses, brain chemicals, learning, hunger, movement.
+A fruit fly brain simulation in Python (only needs numpy). It takes the working ideas from seven open source fly projects and puts them in one place: senses, brain chemicals, learning, hunger, movement. It can run on the real FlyWire brain wiring (138,639 neurons).
 
 ## Quickstart
 
 ```
-python3 demo.py
+python3 demo.py        # tiny hand-built circuit, runs in seconds
+python3 demo_real.py   # real FlyWire wiring, takes about 2 minutes
 ```
 
-Shows a small simulated fly learning. A hungry fly smells an odor, finds sugar, its brain links the smell to the reward, and it starts moving toward the smell instead of away from it.
+Both show a simulated fly learning. A hungry fly smells an odor, finds sugar, its brain links the smell to the reward, and it starts moving toward the smell instead of away from it.
 
 ## Modules
 
 | Module | Taken from | What it does |
 |---|---|---|
+| `connectome/loader.py` | FlyWire (local v783 release) | Loads the real brain wiring: 138,639 neurons, 15M connections |
 | `neuromod/modulators.py` | fwmc / mechabrain | Brain chemicals (dopamine, serotonin, octopamine): how they get released and fade out |
 | `neuromod/effects.py` | fwmc / mechabrain | How those chemicals make neurons more or less excitable |
 | `neuromod/gated_stdp.py` | fwmc / mechabrain | Learning rule: connections strengthen or weaken based on spike timing, steered by dopamine |
@@ -33,6 +35,7 @@ Every module has a small self-test at the bottom (run it directly with python3).
 
 ## Things to know
 
+- The full wiring is loaded sparse. A dense 138,639 x 138,639 matrix would need hundreds of GB, so the loader keeps it sparse and hands out dense blocks for small subcircuits.
 - One repo's "starvation" was just a game countdown with no link to the brain. Skipped. Hunger here uses flyverse-core's energy model instead.
 - Hunger changes behavior through a simple multiplier, not through real brain chemistry. The code says so where it matters.
 - The chemical release needs to know which neurons are dopamine, serotonin, or octopamine neurons. For real brain data those labels must come from FlyWire's annotations.
