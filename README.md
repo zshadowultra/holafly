@@ -1,6 +1,6 @@
 # fly-master
 
-Unified Drosophila brain simulation in Python (numpy only). Ports the mechanisms from seven open source fly projects into one stack: sensory encoding, neuromodulation, mushroom body plasticity, metabolism, motor readout.
+A fruit fly brain simulation in Python (only needs numpy). It takes the working ideas from seven open source fly projects and puts them in one place: senses, brain chemicals, learning, hunger, movement.
 
 ## Quickstart
 
@@ -8,33 +8,33 @@ Unified Drosophila brain simulation in Python (numpy only). Ports the mechanisms
 python3 demo.py
 ```
 
-Runs a synthetic fly through odor conditioning. A hungry fly smells an odor, finds sugar, dopamine-gated plasticity shifts KC to MBON weights, and the motor output flips from avoidance to approach.
+Shows a small simulated fly learning. A hungry fly smells an odor, finds sugar, its brain links the smell to the reward, and it starts moving toward the smell instead of away from it.
 
 ## Modules
 
-| Module | Source | Function |
+| Module | Taken from | What it does |
 |---|---|---|
-| `neuromod/modulators.py` | fwmc / mechabrain | Per-neuron DA, 5HT, OA release, decay, autoreceptor feedback |
-| `neuromod/effects.py` | fwmc / mechabrain | Modulator effects on excitability and synaptic gain |
-| `neuromod/gated_stdp.py` | fwmc / mechabrain | Dopamine-gated STDP, direct and eligibility-trace modes |
-| `neuromod/stp.py` | fwmc / mechabrain | Tsodyks-Markram short-term plasticity, fly presets |
-| `neuromod/gap.py` | fwmc / mechabrain | Gap junction currents, region-based builder |
-| `neuromod/scaling.py` | fwmc / mechabrain | Homeostatic synaptic scaling |
-| `neuromod/structural.py` | fwmc / mechabrain | Prune and sprout structural plasticity |
-| `neuromod/calibration.py` | fwmc / mechabrain | Perturbation-based weight calibration |
-| `plasticity/mushroom_body.py` | flytris, FlyBrain | KC to MBON dopamine learning rules, APL loop |
-| `plasticity/compartments.py` | flytris | DAN to MBON compartment map, approach/avoid valence |
-| `senses/encoders.py` | flyverse-core | Vision, smell, taste, wind to neural drive |
-| `metabolism/hunger.py` | flyverse-core | Energy state, hunger-scaled foraging drive |
-| `body/motor.py` | flyverse-core, FlyBrain | MBON activity to yaw, speed, lunge |
-| `fixes/histamine.py` | fruit-fly | Photoreceptor sign correction |
+| `neuromod/modulators.py` | fwmc / mechabrain | Brain chemicals (dopamine, serotonin, octopamine): how they get released and fade out |
+| `neuromod/effects.py` | fwmc / mechabrain | How those chemicals make neurons more or less excitable |
+| `neuromod/gated_stdp.py` | fwmc / mechabrain | Learning rule: connections strengthen or weaken based on spike timing, steered by dopamine |
+| `neuromod/stp.py` | fwmc / mechabrain | Short-term change in connection strength during bursts of firing |
+| `neuromod/gap.py` | fwmc / mechabrain | Direct electrical links between neurons |
+| `neuromod/scaling.py` | fwmc / mechabrain | Keeps neuron activity from running too hot or too quiet |
+| `neuromod/structural.py` | fwmc / mechabrain | Weak connections get removed, new ones grow between neurons that fire together |
+| `neuromod/calibration.py` | fwmc / mechabrain | Tunes connection strengths toward a target pattern |
+| `plasticity/mushroom_body.py` | flytris, FlyBrain | The fly's learning center: smell in, dopamine teaches, approach or avoid comes out |
+| `plasticity/compartments.py` | flytris | Map of which dopamine neurons talk to which output neurons |
+| `senses/encoders.py` | flyverse-core | Turns light, smell, taste, and wind into brain signals |
+| `metabolism/hunger.py` | flyverse-core | Energy level; hungrier flies search harder |
+| `body/motor.py` | flyverse-core, FlyBrain | Turns brain output into turning, speed, and lunging |
+| `fixes/histamine.py` | fruit-fly | Fix: light-sensing neurons had the wrong signal sign |
 
-Every module has a runnable smoke test under `if __name__ == "__main__"`. Parameter values and literature references are in the module docstrings.
+Every module has a small self-test at the bottom (run it directly with python3). Exact numbers and science references are in the comments inside each file.
 
-## Caveats
+## Things to know
 
-- immortal-fruit-fly "starvation" is a game timer with no neural coupling. It was not used. `hunger.py` ports flyverse-core Metabolism instead.
-- Hunger to behavior coupling is a multiplicative gain (engineering), not neural kinetics.
-- Neuromodulator release keys off cell-type labels (DAN_PPL1, DAN_PAM, serotonergic, octopaminergic). For real connectome data these must come from FlyWire annotations.
-- Gap junctions are not visible in EM data. Placement is region-based by density.
-- flyverse-core time constants are demo scale (minutes). Real starvation takes days.
+- One repo's "starvation" was just a game countdown with no link to the brain. Skipped. Hunger here uses flyverse-core's energy model instead.
+- Hunger changes behavior through a simple multiplier, not through real brain chemistry. The code says so where it matters.
+- The chemical release needs to know which neurons are dopamine, serotonin, or octopamine neurons. For real brain data those labels must come from FlyWire's annotations.
+- Electrical links between neurons cannot be seen in wiring data, so they are placed by brain region.
+- The hunger timing is demo scale (minutes). Real flies take days to starve.
