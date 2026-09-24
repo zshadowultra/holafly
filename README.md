@@ -5,8 +5,9 @@ A fruit fly brain simulation in Python (only needs numpy). It takes the working 
 ## Quickstart
 
 ```
-python3 demo.py        # tiny hand-built circuit, runs in seconds
-python3 demo_real.py   # real FlyWire wiring, takes about 2 minutes
+python3 demo.py           # tiny hand-built circuit, runs in seconds
+python3 demo_real.py      # real FlyWire wiring, 172 neurons, about 20 seconds
+python3 demo_mb_full.py   # full mushroom body on real wiring: 2000 KCs, ~11 seconds
 ```
 
 Both show a simulated fly learning. A hungry fly smells an odor, finds sugar, its brain links the smell to the reward, and it starts moving toward the smell instead of away from it.
